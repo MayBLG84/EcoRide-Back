@@ -46,29 +46,4 @@ use Symfony\Component\Routing\Annotation\Route;
         new OA\Response(response: 400, description: 'Invalid parameters')
     ]
 )]
-class SearchController extends AbstractController
-{
-    private RideRepository $rideRepository;
-
-    public function __construct(RideRepository $rideRepository)
-    {
-        $this->rideRepository = $rideRepository;
-    }
-
-    public function __invoke(Request $request): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        $origin = $data['originCity'] ?? null;
-        $destiny = $data['destinyCity'] ?? null;
-        $date = $data['date'] ?? null;
-
-        if (!$origin || !$destiny || !$date) {
-            return $this->json(['error' => 'Missing parameters'], 400);
-        }
-
-        $rides = $this->rideRepository->searchRides($origin, $destiny, $date);
-
-        return $this->json($rides);
-    }
-}
+class SearchController extends AbstractController {}
