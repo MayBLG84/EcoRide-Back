@@ -14,21 +14,21 @@ class Role
     private ?int $id = null;
 
     #[ORM\Column(length: 25)]
-    private ?string $label = null;
+    private ?string $name = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getLabel(): ?string
+    public function getName(): ?string
     {
-        return $this->label;
+        return $this->name;
     }
 
-    public function setLabel(string $label): static
+    public function setName(string $name): static
     {
-        $this->label = $label;
+        $this->name = $name;
 
         return $this;
     }

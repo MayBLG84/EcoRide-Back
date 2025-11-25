@@ -49,6 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToMany(targetEntity: Vehicle::class, inversedBy: 'users')]
     #[ORM\JoinTable(name: 'user_vehicle')]
+    #[ORM\JoinColumn(nullable: true)]
     private Collection $vehicles;
 
     #[ORM\ManyToMany(targetEntity: Role::class)]
@@ -64,12 +65,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'float')]
     private float $credit;
 
+    #[ORM\OneToOne(mappedBy: 'user', targetEntity: UserAddress::class, cascade: ['persist', 'remove'])]
+    private ?UserAddress $address = null;
+
+    #[ORM\OneToMany(targetEntity: Ride::class, mappedBy: 'driver')]
+    private Collection $ridesAsDriver;
+
+    #[ORM\ManyToMany(targetEntity: Ride::class, mappedBy: 'passengers')]
+    private Collection $ridesAsPassenger;
+
+    /**
+     * @var Collection<int, Evaluation>
+     */
+    #[ORM\OneToMany(targetEntity: Evaluation::class, mappedBy: 'passenger')]
+    private Collection $evaluations;
+
+    /**
+     * @var Collection<int, Evaluation>
+     */
+    #[ORM\OneToMany(targetEntity: Evaluation::class, mappedBy: 'treatedBy')]
+    private Collection $evaluationManagement;
+
     public function __construct()
     {
         $this->vehicles = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->credit = 0.0;
+        $this->ridesAsDriver = new ArrayCollection();
+        $this->ridesAsPassenger = new ArrayCollection();
+        $this->evaluations = new ArrayCollection();
+        $this->evaluationManagement = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -267,6 +293,132 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCredit(float $credit): static
     {
         $this->credit = $credit;
+        return $this;
+    }
+
+    public function getAddress(): ?UserAddress
+    {
+        return $this->address;
+    }
+
+    public function setAddress(UserAddress $address): static
+    {
+        if ($address->getUser() !== $this) {
+            $address->setUser($this);
+        }
+
+        $this->address = $address;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ride>
+     */
+    public function getRidesAsDriver(): Collection
+    {
+        return $this->ridesAsDriver;
+    }
+
+    public function addRidesAsDriver(Ride $ridesAsDriver): static
+    {
+        if (!$this->ridesAsDriver->contains($ridesAsDriver)) {
+            $this->ridesAsDriver->add($ridesAsDriver);
+            $ridesAsDriver->setDriver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRidesAsDriver(Ride $ridesAsDriver): static
+    {
+        if ($this->ridesAsDriver->removeElement($ridesAsDriver)) {
+            if ($ridesAsDriver->getDriver() === $this) {
+                $ridesAsDriver->setDriver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getRidesAsPassenger(): Collection
+    {
+        return $this->ridesAsPassenger;
+    }
+
+    public function addRideAsPassenger(Ride $ride): static
+    {
+        if (!$this->ridesAsPassenger->contains($ride)) {
+            $this->ridesAsPassenger->add($ride);
+            $ride->addPassenger($this);
+        }
+        return $this;
+    }
+
+    public function removeRideAsPassenger(Ride $ride): static
+    {
+        if ($this->ridesAsPassenger->removeElement($ride)) {
+            $ride->removePassenger($this);
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evaluation>
+     */
+    public function getEvaluations(): Collection
+    {
+        return $this->evaluations;
+    }
+
+    public function addEvaluation(Evaluation $evaluation): static
+    {
+        if (!$this->evaluations->contains($evaluation)) {
+            $this->evaluations->add($evaluation);
+            $evaluation->setPassenger($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluation(Evaluation $evaluation): static
+    {
+        if ($this->evaluations->removeElement($evaluation)) {
+            // set the owning side to null (unless already changed)
+            if ($evaluation->getPassenger() === $this) {
+                $evaluation->setPassenger(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Evaluation>
+     */
+    public function getEvaluationManagement(): Collection
+    {
+        return $this->evaluationManagement;
+    }
+
+    public function addEvaluationManagement(Evaluation $evaluationManagement): static
+    {
+        if (!$this->evaluationManagement->contains($evaluationManagement)) {
+            $this->evaluationManagement->add($evaluationManagement);
+            $evaluationManagement->setTreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEvaluationManagement(Evaluation $evaluationManagement): static
+    {
+        if ($this->evaluationManagement->removeElement($evaluationManagement)) {
+            // set the owning side to null (unless already changed)
+            if ($evaluationManagement->getTreatedBy() === $this) {
+                $evaluationManagement->setTreatedBy(null);
+            }
+        }
+
         return $this;
     }
 }
