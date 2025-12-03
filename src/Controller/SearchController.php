@@ -17,19 +17,52 @@ class SearchController extends AbstractController
     ) {}
 
     /**
-     * Search rides by originCity, destinyCity and date (YYYY-MM-DD).
+     * Search rides by originCity, destinyCity and date (NgbDateStruct via query string).
      *
-     * This endpoint returns a JSON object with:
+     * Returns a JSON object:
      *  - status: "EXACT_MATCH" | "FUTURE_MATCH" | "NO_MATCH" | "INVALID_REQUEST"
-     *  - rides: array of ride objects (each contains driver, vehicle, preferences, etc.)
+     *  - rides: array of ride objects
      */
-    #[Route('/api/rides/search', name: 'search_rides', methods: ['GET'])]
+    #[Route('/api/search/rides', name: 'search_rides', methods: ['GET'])]
     #[OA\Get(
         summary: "Search rides",
         parameters: [
-            new OA\Parameter(name: "originCity", in: "query", required: true, schema: new OA\Schema(type: "string")),
-            new OA\Parameter(name: "destinyCity", in: "query", required: true, schema: new OA\Schema(type: "string")),
-            new OA\Parameter(name: "date", in: "query", required: true, description: "Format: YYYY-MM-DD", schema: new OA\Schema(type: "string", format: "date"))
+            new OA\Parameter(
+                name: "originCity",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "destinyCity",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "year",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 2025)
+            ),
+            new OA\Parameter(
+                name: "month",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 12)
+            ),
+            new OA\Parameter(
+                name: "day",
+                in: "query",
+                required: true,
+                schema: new OA\Schema(type: "integer", example: 26)
+            ),
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer", example: 1)
+            )
         ],
         responses: [
             new OA\Response(response: 200, description: "Search results (status + rides)"),
@@ -38,15 +71,30 @@ class SearchController extends AbstractController
     )]
     public function search(Request $request): JsonResponse
     {
+        $originCity  = $request->query->get('originCity');
+        $destinyCity = $request->query->get('destinyCity');
+        $page        = $request->query->get('page');
+
+        $year  = $request->query->get('year');
+        $month = $request->query->get('month');
+        $day   = $request->query->get('day');
+
+        // Convert NgbDateStruct query params into array
+        $dateStruct = [
+            'year'  => $year !== null ? (int)$year : null,
+            'month' => $month !== null ? (int)$month : null,
+            'day'   => $day !== null ? (int)$day : null,
+        ];
+
         $dto = new RideSearchRequest(
-            originCity: $request->query->get('originCity'),
-            destinyCity: $request->query->get('destinyCity'),
-            date: $request->query->get('date')
+            originCity: $originCity,
+            destinyCity: $destinyCity,
+            date: $dateStruct,
+            page: $page !== null ? (int)$page : 1
         );
 
         $responseDto = $this->rideSearchService->search($dto);
 
-        // Return plain array to ensure stable JSON output
         return $this->json([
             'status' => $responseDto->status,
             'rides'  => $responseDto->rides,
