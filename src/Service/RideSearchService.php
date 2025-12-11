@@ -84,19 +84,8 @@ class RideSearchService
 
         $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset);
 
-        if (!empty($exact['results'])) {
-            $totalResults = $exact['totalResults'];
-            return new RideSearchResponse(
-                'EXACT_MATCH',
-                $this->formatRides($exact['results']),
-                [
-                    'page' => $page,
-                    'perPage' => $limit,
-                    'totalPages' => (int) ceil($totalResults / $limit),
-                    'totalResults' => $totalResults,
-                ],
-                $totalResults
-            );
+        if (!empty($exact)) {
+            return new RideSearchResponse('EXACT_MATCH', $this->formatRides($exact));
         }
 
         // ------------------ 6. Future search fallback ------------------
