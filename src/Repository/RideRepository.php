@@ -21,14 +21,18 @@ class RideRepository extends ServiceEntityRepository
     /**
      * Find rides where originCity and destinyCity match and departureDate is on the given date.
      *
-     * @return Ride[]
+     *    @return array{
+     *     results: Ride[],
+     *     totalResults: int
+     * }
      */
     public function searchExact(string $originCity, string $destinyCity, \DateTimeImmutable $date, int $limit = 18, int $offset = 0): array
     {
         $start = $date->setTime(0, 0, 0);
         $end   = $date->setTime(23, 59, 59);
 
-        return $this->createQueryBuilder('r')
+        // ------------------------ MAIN QUERY (paginated) ------------------------
+        $qb = $this->createQueryBuilder('r')
             ->andWhere('LOWER(r.originCity) = :origin')
             ->andWhere('LOWER(r.destinyCity) = :destiny')
             ->andWhere('r.departureDate BETWEEN :start AND :end')
@@ -41,9 +45,24 @@ class RideRepository extends ServiceEntityRepository
             ->orderBy('r.departureDate', 'ASC')
             ->addOrderBy('r.departureIntendedTime', 'ASC')
             ->setFirstResult($offset)
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+        $results = $qb->getQuery()->getResult();   // always array
+
+        // ------------------------ COUNT QUERY (no pagination) ------------------------
+        $countQb = clone $qb;
+        $countQb
+            ->select('COUNT(r.id)')
+            ->resetDQLPart('orderBy')
+            ->setFirstResult(null)
+            ->setMaxResults(null);
+
+        $total = (int) $countQb->getQuery()->getSingleScalarResult();
+
+        return [
+            'results' => $results,
+            'totalResults' => $total,
+        ];
     }
 
     /**
