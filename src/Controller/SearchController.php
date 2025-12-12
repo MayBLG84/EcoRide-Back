@@ -23,7 +23,7 @@ class SearchController extends AbstractController
      *  - status: "EXACT_MATCH" | "FUTURE_MATCH" | "NO_MATCH" | "INVALID_REQUEST"
      *  - rides: array of ride objects
      */
-    #[Route('/api/search/rides', name: 'search_rides', methods: ['GET'])]
+    #[Route('/api/rides/search', name: 'search_rides', methods: ['GET'])]
     #[OA\Get(
         summary: "Search rides",
         parameters: [
@@ -75,16 +75,17 @@ class SearchController extends AbstractController
         $destinyCity = $request->query->get('destinyCity');
         $page        = $request->query->get('page');
 
-        $year  = $request->query->get('year');
-        $month = $request->query->get('month');
-        $day   = $request->query->get('day');
+        $dateArray = $request->query->all('date');
+        if (!is_array($dateArray)) {
+            $dateArray = [];
+        }
 
-        // Convert NgbDateStruct query params into array
         $dateStruct = [
-            'year'  => $year !== null ? (int)$year : null,
-            'month' => $month !== null ? (int)$month : null,
-            'day'   => $day !== null ? (int)$day : null,
+            'year'  => isset($dateArray['year'])  ? (int)$dateArray['year']  : null,
+            'month' => isset($dateArray['month']) ? (int)$dateArray['month'] : null,
+            'day'   => isset($dateArray['day'])   ? (int)$dateArray['day']   : null,
         ];
+
 
         $dto = new RideSearchRequest(
             originCity: $originCity,

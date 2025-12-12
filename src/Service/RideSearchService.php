@@ -52,11 +52,11 @@ class RideSearchService
 
         // ------------------ 2. Security validation ------------------
         if (!$this->securityService->isValidCity($origin) || !$this->securityService->isValidCity($destiny)) {
-            return new RideSearchResponse('INVALID_REQUEST', []);
+            return new RideSearchResponse('INVALID_CITY', []);
         }
 
         if (!$this->securityService->isValidDate($dateStr)) {
-            return new RideSearchResponse('INVALID_REQUEST', []);
+            return new RideSearchResponse('INVALID_DATE', []);
         }
 
         // ------------------ 3. Sanitize and normalize ------------------
@@ -84,8 +84,17 @@ class RideSearchService
 
         $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset);
 
-        if (!empty($exact)) {
-            return new RideSearchResponse('EXACT_MATCH', $this->formatRides($exact));
+        if (!empty($exact['results'])) {
+            return new RideSearchResponse(
+                status: 'EXACT_MATCH',
+                rides: $this->formatRides($exact['results']),
+                pagination: [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'totalResults' => $exact['totalResults'],
+                ],
+                totalResults: $exact['totalResults']
+            );
         }
 
         // ------------------ 6. Future search fallback ------------------
