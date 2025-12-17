@@ -40,19 +40,19 @@ class SearchController extends AbstractController
                 schema: new OA\Schema(type: "string")
             ),
             new OA\Parameter(
-                name: "year",
+                name: "date[year]",
                 in: "query",
                 required: true,
                 schema: new OA\Schema(type: "integer", example: 2025)
             ),
             new OA\Parameter(
-                name: "month",
+                name: "date[month]",
                 in: "query",
                 required: true,
                 schema: new OA\Schema(type: "integer", example: 12)
             ),
             new OA\Parameter(
-                name: "day",
+                name: "date[day]",
                 in: "query",
                 required: true,
                 schema: new OA\Schema(type: "integer", example: 26)

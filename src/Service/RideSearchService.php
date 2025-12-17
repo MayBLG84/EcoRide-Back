@@ -99,13 +99,14 @@ class RideSearchService
 
         // ------------------ 6. Future search fallback ------------------
 
-        $now = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Paris'));
+        $searchedDate = $date->setTime(0, 0, 0);
+        $futureStartDate = $searchedDate->modify('+1 day');
 
         /**
          * We do not paginate the fallback results.
          * It always returns max 6 suggestions.
          */
-        $future = $this->rideRepository->searchFuture($origin, $destiny, $now, 6);
+        $future = $this->rideRepository->searchFuture($origin, $destiny, $searchedDate, 6);
 
         if (!empty($future)) {
             return new RideSearchResponse('FUTURE_MATCH', $this->formatRides($future));

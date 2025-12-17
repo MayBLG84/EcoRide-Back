@@ -68,6 +68,7 @@ class RideRepository extends ServiceEntityRepository
     /**
      * Find rides from $fromDate (inclusive) forward.
      *
+     * @param \DateTimeImmutable $fromDate Inclusive lower bound (00:00)
      * @return Ride[]
      */
     public function searchFuture(string $originCity, string $destinyCity, \DateTimeImmutable $fromDate, int $limit = 6): array
