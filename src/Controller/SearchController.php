@@ -86,12 +86,19 @@ class SearchController extends AbstractController
             'day'   => isset($dateArray['day'])   ? (int)$dateArray['day']   : null,
         ];
 
+        $filters = $request->query->all('filters');
+        if (!is_array($filters)) {
+            $filters = [];
+        }
+        $orderBy = $request->query->get('orderBy', null);
 
         $dto = new RideSearchRequest(
             originCity: $originCity,
             destinyCity: $destinyCity,
             date: $dateStruct,
-            page: $page !== null ? (int)$page : 1
+            page: $page !== null ? (int)$page : 1,
+            filters: $filters,
+            orderBy: $orderBy
         );
 
         $responseDto = $this->rideSearchService->search($dto);

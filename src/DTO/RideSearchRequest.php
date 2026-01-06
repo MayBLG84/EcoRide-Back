@@ -12,6 +12,8 @@ class RideSearchRequest
         public readonly ?string $originCity,
         public readonly ?string $destinyCity,
         public readonly ?array $date = null, // Ex: ['year' => 2025, 'month' => 12, 'day' => 25]
-        public readonly ?int $page = 1
+        public readonly ?int $page = 1,
+        public readonly ?array $filters = null,
+        public readonly ?string $orderBy = null
     ) {}
 }

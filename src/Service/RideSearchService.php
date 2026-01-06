@@ -45,6 +45,8 @@ class RideSearchService
         $origin = $req->originCity ?? '';
         $destiny = $req->destinyCity ?? '';
         $dateStr = $req->date ?? null;
+        $filters = $req->filters ?? [];
+        $orderBy = $req->orderBy ?? null;
 
         if ($origin === '' || $destiny === '' || $dateStr === null) {
             return new RideSearchResponse('INVALID_REQUEST', []);
@@ -82,7 +84,7 @@ class RideSearchService
 
         // ------------------ 5. Exact match search ------------------
 
-        $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset);
+        $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset, $filters, $orderBy);
 
         if (!empty($exact['results'])) {
             return new RideSearchResponse(
@@ -264,7 +266,7 @@ class RideSearchService
      * @param \App\Entity\Ride $ride
      * @return string|null
      */
-    private function computeDuration($ride): ?string
+    private function computeDuration($ride): ?int
     {
         $depDate = $ride->getDepartureDate();
         $arrDate = $ride->getArrivalDate();
@@ -289,9 +291,8 @@ class RideSearchService
 
         $interval = $dep->diff($arr);
 
-        $hours = $interval->d * 24 + $interval->h;
-        $minutes = $interval->i;
-
-        return sprintf('%02d:%02d', $hours, $minutes);
+        return ($interval->days * 24 * 60)
+            + ($interval->h * 60)
+            + $interval->i;
     }
 }
