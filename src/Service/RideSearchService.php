@@ -45,8 +45,32 @@ class RideSearchService
         $origin = $req->originCity ?? '';
         $destiny = $req->destinyCity ?? '';
         $dateStr = $req->date ?? null;
-        $filters = $req->filters ?? [];
         $orderBy = $req->orderBy ?? null;
+        $rawFilters = $req->filters ?? [];
+
+        /**
+         * Normalize and sanitize filters
+         * Important: query params arrive as strings
+         */
+        $filters = [
+            'electricOnly' => filter_var(
+                $rawFilters['electricOnly'] ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            ),
+            'priceMin'    => isset($rawFilters['priceMin']) ? (float) $rawFilters['priceMin'] : null,
+            'priceMax'    => isset($rawFilters['priceMax']) ? (float) $rawFilters['priceMax'] : null,
+            'durationMin' => isset($rawFilters['durationMin']) ? (int) $rawFilters['durationMin'] : null,
+            'durationMax' => isset($rawFilters['durationMax']) ? (int) $rawFilters['durationMax'] : null,
+            'ratingMin'   => isset($rawFilters['ratingMin']) ? (int) $rawFilters['ratingMin'] : null,
+        ];
+
+        /**
+         * Remove neutral / inactive filters
+         */
+        $filters = array_filter(
+            $filters,
+            fn($v) => $v !== null && $v !== false
+        );
 
         if ($origin === '' || $destiny === '' || $dateStr === null) {
             return new RideSearchResponse('INVALID_REQUEST', []);
@@ -87,6 +111,14 @@ class RideSearchService
         $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset, $filters, $orderBy);
 
         if (!empty($exact['results'])) {
+
+            $filtersMeta = $this->rideRepository->getFiltersMeta(
+                $origin,
+                $destiny,
+                $date,
+                $filters
+            );
+
             return new RideSearchResponse(
                 status: 'EXACT_MATCH',
                 rides: $this->formatRides($exact['results']),
@@ -95,14 +127,21 @@ class RideSearchService
                     'limit' => $limit,
                     'totalResults' => $exact['totalResults'],
                 ],
-                totalResults: $exact['totalResults']
+                totalResults: $exact['totalResults'],
+                filtersMeta: $filtersMeta
             );
+        }
+
+        $hasActiveFilters = !empty($filters) || $orderBy !== null;
+
+        if ($hasActiveFilters) {
+            return new RideSearchResponse('NO_MATCH', []);
         }
 
         // ------------------ 6. Future search fallback ------------------
 
         $searchedDate = $date->setTime(0, 0, 0);
-        $futureStartDate = $searchedDate->modify('+1 day');
+        $future = $searchedDate->modify('+1 day');
 
         /**
          * We do not paginate the fallback results.

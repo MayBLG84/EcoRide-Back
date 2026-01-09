@@ -86,10 +86,25 @@ class SearchController extends AbstractController
             'day'   => isset($dateArray['day'])   ? (int)$dateArray['day']   : null,
         ];
 
-        $filters = $request->query->all('filters');
-        if (!is_array($filters)) {
-            $filters = [];
+        $rawFilters = $request->query->all('filters');
+        if (!is_array($rawFilters)) {
+            $rawFilters = [];
         }
+
+        $filters = [
+            'electricOnly' => filter_var($rawFilters['electricOnly'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'priceMin'     => isset($rawFilters['priceMin']) ? (float) $rawFilters['priceMin'] : null,
+            'priceMax'     => isset($rawFilters['priceMax']) ? (float) $rawFilters['priceMax'] : null,
+            'durationMin'  => isset($rawFilters['durationMin']) ? (int) $rawFilters['durationMin'] : null,
+            'durationMax'  => isset($rawFilters['durationMax']) ? (int) $rawFilters['durationMax'] : null,
+            'ratingMin'    => isset($rawFilters['ratingMin']) ? (int) $rawFilters['ratingMin'] : null,
+        ];
+
+        $filters = array_filter(
+            $filters,
+            fn($v) => $v !== null && $v !== false
+        );
+
         $orderBy = $request->query->get('orderBy', null);
 
         $dto = new RideSearchRequest(
@@ -106,6 +121,9 @@ class SearchController extends AbstractController
         return $this->json([
             'status' => $responseDto->status,
             'rides'  => $responseDto->rides,
+            'pagination'  => $responseDto->pagination,
+            'totalResults' => $responseDto->totalResults,
+            'filtersMeta' => $responseDto->filtersMeta,
         ]);
     }
 }

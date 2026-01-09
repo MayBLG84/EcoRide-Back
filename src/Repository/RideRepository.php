@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Ride;
+use App\Repository\EvaluationRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -13,9 +14,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class RideRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private EvaluationRepository $evaluationRepository;
+
+    public function __construct(ManagerRegistry $registry, EvaluationRepository $evaluationRepository)
     {
         parent::__construct($registry, Ride::class);
+        $this->evaluationRepository = $evaluationRepository;
     }
 
     /**
@@ -67,19 +71,35 @@ class RideRepository extends ServiceEntityRepository
         }
 
         // ------------------ DINAMIC ORDER ------------------
+        $durationExpr = "
+            TIMESTAMPDIFF(
+                MINUTE,
+                CONCAT(r.departureDate, ' ', r.departureIntendedTime),
+                CONCAT(r.arrivalDate, ' ', r.arrivalEstimatedTime)
+            )
+        ";
         if (!empty($orderBy)) {
             switch ($orderBy) {
                 case 'PRICE_ASC':
-                    $qb->orderBy('r.price', 'ASC');
+                    $qb->orderBy('r.pricePerson', 'ASC');
                     break;
                 case 'PRICE_DESC':
-                    $qb->orderBy('r.price', 'DESC');
+                    $qb->orderBy('r.pricePerson', 'DESC');
                     break;
                 case 'DURATION_ASC':
-                    $qb->orderBy('r.estimatedDuration', 'ASC');
+                    $qb
+                        ->addSelect("$durationExpr AS HIDDEN duration")
+                        ->andWhere('r.departureIntendedTime IS NOT NULL')
+                        ->andWhere('r.arrivalEstimatedTime IS NOT NULL')
+                        ->orderBy('duration', 'ASC');
                     break;
+
                 case 'DURATION_DESC':
-                    $qb->orderBy('r.estimatedDuration', 'DESC');
+                    $qb
+                        ->addSelect("$durationExpr AS HIDDEN duration")
+                        ->andWhere('r.departureIntendedTime IS NOT NULL')
+                        ->andWhere('r.arrivalEstimatedTime IS NOT NULL')
+                        ->orderBy('duration', 'DESC');
                     break;
                 default:
                     $qb->orderBy('r.departureDate', 'ASC')
@@ -122,9 +142,11 @@ class RideRepository extends ServiceEntityRepository
 
         // ------------------------ COUNT QUERY (no pagination) ------------------------
         $countQb = clone $qb;
+
         $countQb
-            ->select('COUNT(r.id)')
+            ->resetDQLPart('select')
             ->resetDQLPart('orderBy')
+            ->select('COUNT(r.id)')
             ->setFirstResult(null)
             ->setMaxResults(null);
 
@@ -133,6 +155,95 @@ class RideRepository extends ServiceEntityRepository
         return [
             'results' => $results,
             'totalResults' => $total,
+        ];
+    }
+
+    public function getFiltersMeta(
+        string $originCity,
+        string $destinyCity,
+        \DateTimeImmutable $date,
+        array $filters = []
+    ): array {
+        $start = $date->setTime(0, 0, 0);
+        $end   = $date->setTime(23, 59, 59);
+
+        // ---------------- PRICE (SQL) ----------------
+        $qb = $this->createQueryBuilder('r')
+            ->select('MIN(r.pricePerson) AS priceMin', 'MAX(r.pricePerson) AS priceMax')
+            ->andWhere('LOWER(r.originCity) = :origin')
+            ->andWhere('LOWER(r.destinyCity) = :destiny')
+            ->andWhere('r.departureDate BETWEEN :start AND :end')
+            ->andWhere('r.nbPlacesAvailable > 0')
+            ->andWhere('r.cancelledAt IS NULL')
+            ->setParameter('origin', mb_strtolower($originCity))
+            ->setParameter('destiny', mb_strtolower($destinyCity))
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        // Apply filter "electricOnly" for price
+        if (!empty($filters['electricOnly'])) {
+            $qb->join('r.vehicle', 'v')
+                ->andWhere('v.electric = true');
+        }
+
+        $priceResult = $qb->getQuery()->getSingleResult();
+
+        // ---------------- DURATION (PHP) ----------------
+        $qbDur = $this->createQueryBuilder('r')
+            ->andWhere('LOWER(r.originCity) = :origin')
+            ->andWhere('LOWER(r.destinyCity) = :destiny')
+            ->andWhere('r.departureDate BETWEEN :start AND :end')
+            ->andWhere('r.nbPlacesAvailable > 0')
+            ->andWhere('r.cancelledAt IS NULL')
+            ->setParameter('origin', mb_strtolower($originCity))
+            ->setParameter('destiny', mb_strtolower($destinyCity))
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        // Apply filter "electricOnly" for duration
+        if (!empty($filters['electricOnly'])) {
+            $qbDur->join('r.vehicle', 'v')
+                ->andWhere('v.electric = true');
+        }
+
+        $rides = $qbDur->getQuery()->getResult();
+
+        $durations = [];
+
+        foreach ($rides as $ride) {
+            $depDate = $ride->getDepartureDate();
+            $arrDate = $ride->getArrivalDate();
+            $depTime = $ride->getDepartureIntendedTime();
+            $arrTime = $ride->getArrivalEstimatedTime();
+
+            // Ignore incomplete rides
+            if (!$depDate || !$arrDate || !$depTime || !$arrTime) {
+                continue;
+            }
+
+            $dep = (clone $depDate)->setTime((int)$depTime->format('H'), (int)$depTime->format('i'));
+            $arr = (clone $arrDate)->setTime((int)$arrTime->format('H'), (int)$arrTime->format('i'));
+
+            $minutes = (int)(($arr->getTimestamp() - $dep->getTimestamp()) / 60);
+
+            if ($minutes > 0) {
+                $durations[] = $minutes;
+            }
+        }
+
+        // Default values
+        $minDuration = !empty($durations) ? min($durations) : 10;
+        $maxDuration = !empty($durations) ? max($durations) : 1440;
+
+        return [
+            'price' => [
+                'min' => (float) ($priceResult['priceMin'] ?? 0),
+                'max' => (float) ($priceResult['priceMax'] ?? 0),
+            ],
+            'duration' => [
+                'min' => $minDuration,
+                'max' => $maxDuration,
+            ],
         ];
     }
 
