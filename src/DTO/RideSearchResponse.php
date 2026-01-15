@@ -21,6 +21,7 @@ class RideSearchResponse
         public readonly array $rides,
         public readonly ?array $pagination = null,
         public readonly ?int $totalResults = null,
-        public readonly ?array $filtersMeta = null
+        public readonly ?array $filtersMeta = null,
+        public readonly ?array $filtersMetaGlobal = null
     ) {}
 }

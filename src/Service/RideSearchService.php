@@ -5,7 +5,6 @@ namespace App\Service;
 use App\DTO\RideSearchRequest;
 use App\DTO\RideSearchResponse;
 use App\Repository\RideRepository;
-use App\Repository\EvaluationRepository;
 
 /**
  * Service responsible for orchestrating ride search logic.
@@ -24,7 +23,6 @@ class RideSearchService
 {
     public function __construct(
         private readonly RideRepository $rideRepository,
-        private readonly EvaluationRepository $evaluationRepository,
         private readonly SecurityService $securityService
     ) {}
 
@@ -61,7 +59,7 @@ class RideSearchService
             'priceMax'    => isset($rawFilters['priceMax']) ? (float) $rawFilters['priceMax'] : null,
             'durationMin' => isset($rawFilters['durationMin']) ? (int) $rawFilters['durationMin'] : null,
             'durationMax' => isset($rawFilters['durationMax']) ? (int) $rawFilters['durationMax'] : null,
-            'ratingMin'   => isset($rawFilters['ratingMin']) ? (int) $rawFilters['ratingMin'] : null,
+            'ratingMin'   => isset($rawFilters['ratingMin']) ? (float)$rawFilters['ratingMin'] : null,
         ];
 
         /**
@@ -69,7 +67,7 @@ class RideSearchService
          */
         $filters = array_filter(
             $filters,
-            fn($v) => $v !== null && $v !== false
+            fn($v) => $v !== null
         );
 
         if ($origin === '' || $destiny === '' || $dateStr === null) {
@@ -106,56 +104,129 @@ class RideSearchService
         $limit = 18;                        // Max number of results per page
         $offset = ($page - 1) * $limit;     // SQL offset
 
-        // ------------------ 5. Exact match search ------------------
+        // ------------------ 5. Detect active filters ------------------
+        $hasActiveFilters = !empty(array_filter($filters, fn($v) => $v !== null && $v !== false && $v !== 0)) || !empty($orderBy);
 
-        $exact = $this->rideRepository->searchExact($origin, $destiny, $date, $limit, $offset, $filters, $orderBy);
 
-        if (!empty($exact['results'])) {
+        // ------------------ 6. GLOBAL search (ALWAYS executed) ------------------
+        $global = $this->rideRepository->searchExact(
+            $origin,
+            $destiny,
+            $date,
+            $limit,
+            $offset
+        );
 
-            $filtersMeta = $this->rideRepository->getFiltersMeta(
+        $filtersMetaGlobal = $this->rideRepository->getGlobalFiltersMeta(
+            $origin,
+            $destiny,
+            $date
+        );
+
+        $totalGlobalResults = $global['totalResults'] ?? 0;
+
+
+        // ------------------ 7. NO FILTERS FLOW (GLOBAL SEARCH) ------------------
+        if (!$hasActiveFilters) {
+
+            // 7.1 Exact match (global)
+            if (!empty($global['results'])) {
+                return new RideSearchResponse(
+                    status: 'EXACT_MATCH',
+                    rides: $this->formatRides($global['results']),
+                    pagination: [
+                        'page' => $page,
+                        'limit' => $limit,
+                        'totalResults' => $totalGlobalResults,
+                    ],
+                    totalResults: $totalGlobalResults,
+                    filtersMeta: null,
+                    filtersMetaGlobal: $filtersMetaGlobal
+                );
+            }
+
+            // 7.2 Future fallback (GLOBAL ONLY)
+            $searchedDate = $date->modify('+1 day')->setTime(0, 0, 0);
+
+            $future = $this->rideRepository->searchFuture(
                 $origin,
                 $destiny,
-                $date,
-                $filters
+                $searchedDate,
+                6
             );
 
-            return new RideSearchResponse(
-                status: 'EXACT_MATCH',
-                rides: $this->formatRides($exact['results']),
-                pagination: [
-                    'page' => $page,
-                    'limit' => $limit,
-                    'totalResults' => $exact['totalResults'],
-                ],
-                totalResults: $exact['totalResults'],
-                filtersMeta: $filtersMeta
-            );
-        }
+            if (!empty($future)) {
+                return new RideSearchResponse(
+                    status: 'FUTURE_MATCH',
+                    rides: $this->formatRides($future),
+                    pagination: null,
+                    totalResults: null,
+                    filtersMeta: null,
+                    filtersMetaGlobal: null
+                );
+            }
 
-        $hasActiveFilters = !empty($filters) || $orderBy !== null;
-
-        if ($hasActiveFilters) {
+            // 7.3 No match at all
             return new RideSearchResponse('NO_MATCH', []);
         }
 
-        // ------------------ 6. Future search fallback ------------------
 
-        $searchedDate = $date->setTime(0, 0, 0);
-        $future = $searchedDate->modify('+1 day');
+        // ------------------ 8. FILTERED SEARCH FLOW ------------------
+        $filtered = $this->rideRepository->searchExact(
+            $origin,
+            $destiny,
+            $date,
+            $limit,
+            $offset,
+            $filters,
+            $orderBy
+        );
 
-        /**
-         * We do not paginate the fallback results.
-         * It always returns max 6 suggestions.
-         */
-        $future = $this->rideRepository->searchFuture($origin, $destiny, $searchedDate, 6);
+        $filtersMeta = $this->rideRepository->getFilteredFiltersMeta(
+            $origin,
+            $destiny,
+            $date,
+            $filters
+        );
 
-        if (!empty($future)) {
-            return new RideSearchResponse('FUTURE_MATCH', $this->formatRides($future));
+        // 8.1 Filtered exact match
+        if (!empty($filtered['results'])) {
+            return new RideSearchResponse(
+                status: 'EXACT_MATCH',
+                rides: $this->formatRides($filtered['results']),
+                pagination: [
+                    'page' => $page,
+                    'limit' => $limit,
+                    'totalResults' => $filtered['totalResults'],
+                ],
+                totalResults: $totalGlobalResults,
+                filtersMeta: $filtersMeta,
+                filtersMetaGlobal: $filtersMetaGlobal
+            );
         }
 
-        // ------------------ 7. No results ------------------
+        // 8.2 Filtered no match
+        $filtersMetaNoResults = [
+            'electric' => $filters['electricOnly'] ?? false,
+            'price' => [
+                'min' => $filters['priceMin'] ?? null,
+                'max' => $filters['priceMax'] ?? null,
+            ],
+            'duration' => [
+                'min' => $filters['durationMin'] ?? null,
+                'max' => $filters['durationMax'] ?? null,
+            ],
+            'ratingMin' => $filters['ratingMin'] ?? null,
+        ];
 
-        return new RideSearchResponse('NO_MATCH', []);
+        return new RideSearchResponse(
+            status: 'NO_MATCH',
+            rides: [],
+            pagination: null,
+            totalResults: $totalGlobalResults,
+            filtersMeta: $filtersMetaNoResults,
+            filtersMetaGlobal: $filtersMetaGlobal
+        );
     }
 
     /**
@@ -164,8 +235,6 @@ class RideSearchService
      * Steps:
      * - Safe extraction of driver, vehicle and preferences
      * - Thumbnail generation (GD or fallback)
-     * - Average rating lookup
-     * - Duration computation
      *
      * @param array<int, \App\Entity\Ride> $rides
      * @return array<int,array<string,mixed>>
@@ -183,18 +252,14 @@ class RideSearchService
             $thumbnailBase64 = $this->generateDriverThumbnail($driver?->getPhoto());
 
             // Rating
-            $avgRating = null;
-            if ($driver && $driver->getId() !== null) {
-                $avg = $this->evaluationRepository->getAverageRatingForDriver($driver->getId());
-                $avgRating = $avg !== null ? round((float)$avg, 1) : 0.0;
-            }
+            $avgRating = $driver?->getAvgRating() ?? 0.0;
 
             // ------------------ DATE / TIME ------------------
             $dateStr = $ride->getDepartureDate()?->format('d/m/Y');
             $departureTime = $ride->getDepartureIntendedTime()?->format('H:i');
 
-            // Duration (HH:MM)
-            $duration = $this->computeDuration($ride);
+            // Duration (minutes)
+            $duration = $ride->getEstimatedDuration();
 
             // ------------------ VEHICLE ------------------
             $vehicle = $ride->getVehicle();
@@ -297,41 +362,5 @@ class RideSearchService
 
         // Fallback – return original blob
         return 'data:image/jpeg;base64,' . base64_encode($raw);
-    }
-
-    /**
-     * Compute ride duration in HH:MM format.
-     *
-     * @param \App\Entity\Ride $ride
-     * @return string|null
-     */
-    private function computeDuration($ride): ?int
-    {
-        $depDate = $ride->getDepartureDate();
-        $arrDate = $ride->getArrivalDate();
-        $depTime = $ride->getDepartureIntendedTime();
-        $arrTime = $ride->getArrivalEstimatedTime();
-
-        if (!$depDate || !$arrDate || !$depTime || !$arrTime) {
-            return null;
-        }
-
-        $dep = (clone $depDate)->setTime(
-            (int)$depTime->format('H'),
-            (int)$depTime->format('i'),
-            (int)$depTime->format('s')
-        );
-
-        $arr = (clone $arrDate)->setTime(
-            (int)$arrTime->format('H'),
-            (int)$arrTime->format('i'),
-            (int)$arrTime->format('s')
-        );
-
-        $interval = $dep->diff($arr);
-
-        return ($interval->days * 24 * 60)
-            + ($interval->h * 60)
-            + $interval->i;
     }
 }

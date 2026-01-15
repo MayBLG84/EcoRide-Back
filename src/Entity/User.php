@@ -74,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Ride::class, mappedBy: 'passengers')]
     private Collection $ridesAsPassenger;
 
+    #[ORM\Column(type: 'float', options: ['default' => 0])]
+    private float $avgRating = 0.0;
+
     /**
      * @var Collection<int, Evaluation>
      */
@@ -419,6 +422,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getAvgRating(): float
+    {
+        return $this->avgRating;
+    }
+
+    public function setAvgRating(float $avgRating): static
+    {
+        $this->avgRating = $avgRating;
         return $this;
     }
 }

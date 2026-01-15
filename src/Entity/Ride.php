@@ -97,6 +97,9 @@ class Ride
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $cancelledAt = null;
 
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $estimatedDuration = 0;
+
     /**
      * @var Collection<int, Evaluation>
      */
@@ -436,6 +439,17 @@ class Ride
             }
         }
 
+        return $this;
+    }
+
+    public function getEstimatedDuration(): int
+    {
+        return $this->estimatedDuration;
+    }
+
+    public function setEstimatedDuration(int $minutes): static
+    {
+        $this->estimatedDuration = $minutes;
         return $this;
     }
 }

@@ -124,6 +124,7 @@ class SearchController extends AbstractController
             'pagination'  => $responseDto->pagination,
             'totalResults' => $responseDto->totalResults,
             'filtersMeta' => $responseDto->filtersMeta,
+            'filtersMetaGlobal' => $responseDto->filtersMetaGlobal,
         ]);
     }
 }
