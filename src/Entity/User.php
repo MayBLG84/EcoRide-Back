@@ -42,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $telephone = null;
 
     #[ORM\Column(type: 'datetime')]
-    private \DateTime $birthday;
+    private \DateTimeImmutable $birthday;
 
     #[ORM\Column(type: 'blob', nullable: true)]
     private $photo = null;
@@ -204,12 +204,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthday(): \DateTime
+    public function getBirthday(): \DateTimeImmutable
     {
         return $this->birthday;
     }
 
-    public function setBirthday(\DateTime $birthday): static
+    public function setBirthday(\DateTimeImmutable $birthday): static
     {
         $this->birthday = $birthday;
         return $this;

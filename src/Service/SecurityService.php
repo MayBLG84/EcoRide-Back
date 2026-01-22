@@ -112,4 +112,15 @@ class SecurityService
             new \DateTimeZone('Europe/Paris')
         );
     }
+
+    /**
+     * Clean nickname before setting it to DB
+     */
+    public function cleanNickname(string $nickname): string
+    {
+        $clean = preg_replace('/[\x00-\x1F\x7F]/u', '', $nickname);
+        $clean = preg_replace('/[\p{C}\p{Zl}\p{Zp}]/u', '', $clean);
+
+        return $clean;
+    }
 }
