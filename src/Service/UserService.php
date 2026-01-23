@@ -12,6 +12,7 @@ use App\Repository\RoleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Service\SecurityServiceService;
 
 class UserService
 {
@@ -56,6 +57,13 @@ class UserService
 
         if (!$dto->birthday instanceof \DateTimeImmutable) {
             return $this->fail($response, 'INVALID_BIRTHDAY');
+        }
+
+        // ─────────────────────────────────────
+        // Age validation (18+)
+        // ─────────────────────────────────────
+        if (!$this->isAtLeastAge($dto->birthday, 18)) {
+            return $this->fail($response, 'UNDERAGE');
         }
 
         // ─────────────────────────────────────
@@ -178,7 +186,15 @@ class UserService
 
     public function isNicknameExists(string $nickname): bool
     {
-        $nickname = $this->security->normalizeString($nickname);
+        $nickname = $this->security->cleanNickname($nickname);
         return $this->userRepo->existsByNickname($nickname);
+    }
+
+    public function isAtLeastAge(\DateTimeImmutable $birthday, int $minAge): bool
+    {
+        $today = new \DateTimeImmutable('today');
+        $age = $today->diff($birthday)->y;
+
+        return $age >= $minAge;
     }
 }

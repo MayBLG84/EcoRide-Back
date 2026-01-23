@@ -5,7 +5,7 @@ namespace App\DTO;
 /**
  * DTO representing the response returned by the search service.
  *
- * status: one of "EXACT_MATCH", "FUTURE_MATCH", "NO_MATCH", "INVALID_REQUEST"
+ * status: one of "EXACT_MATCH", "FUTURE_MATCH", "NO_MATCH", "INVALID_XXX", "UNDERAGE"
  * rides: array of associative arrays (each is a formatted ride ready for the frontend)
  * pagination: optional pagination metadata (only for EXACT_MATCH)
  */
