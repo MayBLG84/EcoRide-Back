@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use OpenApi\Attributes as OA;
 
@@ -15,7 +16,7 @@ final class SignupController extends AbstractController
 {
     private UserService $userService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, private readonly ValidatorInterface $validator)
     {
         $this->userService = $userService;
     }
@@ -127,7 +128,25 @@ final class SignupController extends AbstractController
     public function create(Request $request): Response
     {
         $dto = $this->mapRequestToDto($request);
+
+        $errors = $this->validator->validate($dto);
+        if (count($errors) > 0) {
+            $messages = [];
+            foreach ($errors as $error) {
+                $messages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
+            }
+
+            return $this->json(
+                [
+                    'status' => 'INVALID_REQUEST',
+                    'errors' => $messages
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $response = $this->userService->createUser($dto);
+
         $statusCode = match ($response->status) {
             'SUCCESS' => Response::HTTP_CREATED,
             'EMAIL_ALREADY_EXISTS',
