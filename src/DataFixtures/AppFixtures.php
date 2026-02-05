@@ -132,7 +132,7 @@ class AppFixtures extends Fixture
         // -------------------- VEHICLES --------------------
         $vehiclesData = [
             ['id' => 1, 'brand' => 5, 'model' => 'Q4', 'color' => 'Noir', 'registration' => 'AA-123-AA', 'first_rg_date' => '2020-12-12 16:11:14', 'electric' => false],
-            ['id' => 2, 'brand' => 8, 'model' => 'Model 3', 'color' => 'Blanc', 'registration' => 'BB-456-BB', 'first_rg_date' => '2017-12-12 16:15:23', 'electric' => false],
+            ['id' => 2, 'brand' => 8, 'model' => 'Model 3', 'color' => 'Blanc', 'registration' => 'BB-456-BB', 'first_rg_date' => '2017-12-12 16:15:23', 'electric' => true],
             ['id' => 3, 'brand' => 6, 'model' => 'X1', 'color' => 'Bleu foncé', 'registration' => 'CC-789-CC', 'first_rg_date' => '2025-12-12 16:18:26', 'electric' => false],
             ['id' => 100, 'brand' => 7, 'model' => 'Golf', 'color' => 'Gris', 'registration' => 'DD-111-DD', 'first_rg_date' => '2021-05-05 10:00:00', 'electric' => false],
         ];
