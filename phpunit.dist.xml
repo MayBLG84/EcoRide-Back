@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
+<!-- PHPUnit configuration for EcoRide project -->
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          colors="true"
@@ -9,6 +9,7 @@
          failOnWarning="true"
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
+         stopOnFailure="false"
 >
     <php>
         <ini name="display_errors" value="1" />
@@ -17,12 +18,22 @@
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 
+    <!-- Define testsuites by folder -->
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Functional">
+            <directory>tests/Functional</directory>
+        </testsuite>
+
+        <testsuite name="Database">
+            <directory>tests/Database</directory>
         </testsuite>
     </testsuites>
 
+    <!-- Source configuration for deprecations and code coverage -->
     <source ignoreSuppressionOfDeprecations="true"
             ignoreIndirectDeprecations="true"
             restrictNotices="true"
@@ -40,5 +51,6 @@
     </source>
 
     <extensions>
+        <!-- Add PHPUnit extensions here if needed -->
     </extensions>
 </phpunit>
