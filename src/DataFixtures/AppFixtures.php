@@ -28,7 +28,7 @@ class AppFixtures extends Fixture
     {
         // -------------------- ROLES --------------------
         $rolesData = [
-            1 => 'ROLE_ADM',
+            1 => 'ROLE_ADMIN',
             2 => 'ROLE_DRIVER',
             3 => 'ROLE_PASSENGER',
             4 => 'ROLE_EMPLOYEE',
@@ -62,19 +62,19 @@ class AppFixtures extends Fixture
 
         // -------------------- USERS --------------------
         $usersData = [
-            ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe', 'nickname' => 'JDoe', 'email' => 'john.doe@test.com', 'password' => 'Asdfg123!', 'telephone' => '012345678', 'birthday' => '1981-12-12', 'credit' => 35, 'avg_rating' => 2.2, 'roles' => [1, 2]],
-            ['id' => 3, 'first_name' => 'Mary', 'last_name' => 'Doe', 'nickname' => 'MDoe', 'email' => 'mary.doe@test.com', 'password' => 'Asdfg123!', 'telephone' => '02345678', 'birthday' => '2000-12-12', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
-            ['id' => 5, 'first_name' => 'Jack', 'last_name' => 'Doe', 'nickname' => 'JaDoe55', 'email' => 'jack.joe@test.com', 'password' => 'Asdfg123!', 'telephone' => '03456789', 'birthday' => '1999-12-12', 'credit' => 10, 'avg_rating' => 4.1, 'roles' => [2]],
-            ['id' => 6, 'first_name' => 'Jean', 'last_name' => 'Dupont', 'nickname' => 'JeDu@95', 'email' => 'user@example.com', 'password' => '$2y$13$hash', 'telephone' => '0612345678', 'birthday' => '1995-06-15', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
-            ['id' => 7, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont', 'email' => 'test@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1995-01-12', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
-            ['id' => 8, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont2', 'email' => 'teste@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1976-01-21', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
-            ['id' => 9, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont3', 'email' => 'test2@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1986-01-24', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
+            ['id' => 1, 'first_name' => 'John', 'last_name' => 'Doe', 'nickname' => 'JDoe', 'email' => 'john.doe@test.com', 'password' => 'Asdfg123!', 'telephone' => '012345678', 'birthday' => '1981-12-12 15:51:53', 'credit' => 35, 'avg_rating' => 2.2, 'roles' => [1, 2]],
+            ['id' => 3, 'first_name' => 'Mary', 'last_name' => 'Doe', 'nickname' => 'MDoe', 'email' => 'mary.doe@test.com', 'password' => 'Asdfg123!', 'telephone' => '02345678', 'birthday' => '2000-12-12 15:56:25', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
+            ['id' => 5, 'first_name' => 'Jack', 'last_name' => 'Doe', 'nickname' => 'JaDoe55', 'email' => 'jack.joe@test.com', 'password' => 'Asdfg123!', 'telephone' => '03456789', 'birthday' => '1999-12-12 16:03:35', 'credit' => 10, 'avg_rating' => 4.1, 'roles' => [2]],
+            ['id' => 6, 'first_name' => 'Jean', 'last_name' => 'Dupont', 'nickname' => 'JeDu@95', 'email' => 'user@example.com', 'password' => '$2y$13$hash', 'telephone' => '0612345678', 'birthday' => '1995-06-15 00:00:00', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
+            ['id' => 7, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont', 'email' => 'test@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1995-01-12 00:00:00', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
+            ['id' => 8, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont2', 'email' => 'teste@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1976-01-21 00:00:00', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
+            ['id' => 9, 'first_name' => 'Marie', 'last_name' => 'Dupont-Laurie', 'nickname' => 'M.Dupont3', 'email' => 'test2@test.com', 'password' => '$2y$13$hash', 'telephone' => '00000000', 'birthday' => '1986-01-24 00:00:00', 'credit' => 20, 'avg_rating' => 0, 'roles' => [3]],
             // DEMO USERS
-            ['id' => 100, 'first_name' => 'Admin', 'last_name' => 'EcoRide', 'nickname' => 'AdminUser', 'email' => 'admin@ecoride.test', 'password' => '$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW', 'telephone' => '0600000001', 'birthday' => '1980-01-01', 'credit' => 100, 'avg_rating' => 5, 'roles' => [1]],
-            ['id' => 101, 'first_name' => 'Emma', 'last_name' => 'Employee', 'nickname' => 'EmployeeUser', 'email' => 'employee@ecoride.test', 'password' => '$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW', 'telephone' => '0600000002', 'birthday' => '1990-01-01', 'credit' => 50, 'avg_rating' => 4.5, 'roles' => [4]],
-            ['id' => 102, 'first_name' => 'David', 'last_name' => 'Driver', 'nickname' => 'DriverUser', 'email' => 'driver@ecoride.test', 'password' => '$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW', 'telephone' => '0600000003', 'birthday' => '1992-01-01', 'credit' => 30, 'avg_rating' => 4.8, 'roles' => [2]],
-            ['id' => 103, 'first_name' => 'Paul', 'last_name' => 'Passenger', 'nickname' => 'PassengerUser', 'email' => 'passenger@ecoride.test', 'password' => '$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW', 'telephone' => '0600000004', 'birthday' => '1998-01-01', 'credit' => 20, 'avg_rating' => 4, 'roles' => [3]],
-            ['id' => 104, 'first_name' => 'Claire', 'last_name' => 'Hybrid', 'nickname' => 'HybridUser', 'email' => 'hybrid@ecoride.test', 'password' => '$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW', 'telephone' => '0600000005', 'birthday' => '1995-01-01', 'credit' => 40, 'avg_rating' => 4.6, 'roles' => [2, 3]],
+            ['id' => 106, 'first_name' => 'Admin', 'last_name' => 'EcoRide', 'nickname' => 'AdminUser', 'email' => 'admin@ecoride.test', 'password' => '$2y$13$Ou6T.1QNnZKLjtUeMS1F2uKHLQHcFpA3UuXaZSjILSerP4RTzKBr.', 'telephone' => '0600000001', 'birthday' => '1980-01-01 00:00:00', 'credit' => 100, 'avg_rating' => 5, 'roles' => [1]],
+            ['id' => 107, 'first_name' => 'Emma', 'last_name' => 'Employee', 'nickname' => 'EmployeeUser', 'email' => 'employee@ecoride.test', 'password' => '$2y$13$wHx2PjQr.Colmx.MGCFAmOhIWi6sP/t3eDUtZg/vSTKkMi4vX5rbq', 'telephone' => '0600000002', 'birthday' => '1990-01-01 00:00:00', 'credit' => 50, 'avg_rating' => 4.5, 'roles' => [4]],
+            ['id' => 108, 'first_name' => 'David', 'last_name' => 'Driver', 'nickname' => 'DriverUser', 'email' => 'driver@ecoride.test', 'password' => '$2y$13$mcyliB7I6/kk5/SeuNC.c.8909nCswbWoMjwPk1JL53pl6lLNZLhm', 'telephone' => '0600000003', 'birthday' => '1992-01-01 00:00:00', 'credit' => 30, 'avg_rating' => 4.8, 'roles' => [2]],
+            ['id' => 109, 'first_name' => 'Paul', 'last_name' => 'Passenger', 'nickname' => 'PassengerUser', 'email' => 'passenger@ecoride.test', 'password' => '$2y$13$FZxiTtff18sRIYf.OtoJ3u/c6NS6hxLLudheJXCr2qvHv88NClroq', 'telephone' => '0600000004', 'birthday' => '1998-01-01 00:00:00', 'credit' => 20, 'avg_rating' => 4, 'roles' => [3]],
+            ['id' => 110, 'first_name' => 'Claire', 'last_name' => 'Hybrid', 'nickname' => 'HybridUser', 'email' => 'hybrid@ecoride.test', 'password' => '$2y$13$QovA0TbFbiFWeRWkc3YzYuKnTDShH3LmGEUY5CjJBNuwVkVtrcGrS', 'telephone' => '0600000005', 'birthday' => '1995-01-01 00:00:00', 'credit' => 40, 'avg_rating' => 4.6, 'roles' => [2, 3]],
         ];
 
         foreach ($usersData as $u) {
@@ -156,7 +156,7 @@ class AppFixtures extends Fixture
             ['user' => 5, 'vehicle' => 1],
             ['user' => 5, 'vehicle' => 2],
             ['user' => 1, 'vehicle' => 3],
-            ['user' => 102, 'vehicle' => 100],
+            ['user' => 108, 'vehicle' => 100],
         ];
 
         foreach ($userVehiclesData as $uv) {
@@ -204,10 +204,10 @@ class AppFixtures extends Fixture
 
         // -------------------- RIDES --------------------
         $ridesData = [
-            ['id' => 3, 'driver' => 5, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-02-20 16:58:44', 'dep_time' => '14:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-02-20 16:58:44', 'arr_time' => '16:30:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 27, 'smokers' => 0, 'animals' => 0, 'other' => 'Merci de ne pas manger dans la voiture', 'duration' => 150],
-            ['id' => 4, 'driver' => 5, 'status' => 3, 'vehicle' => 2, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-02-20 16:58:44', 'dep_time' => '18:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-02-20 16:58:44', 'arr_time' => '21:00:00', 'nb_places' => 2, 'nb_available' => 1, 'price' => 25.5, 'smokers' => 1, 'animals' => 0, 'other' => null, 'duration' => 180],
-            ['id' => 5, 'driver' => 1, 'status' => 2, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '39, rue Gabriel Lamé', 'dep_date' => '2026-02-20 17:14:21', 'dep_time' => '10:00:00', 'dest' => 'Lyon', 'drop' => 'Faculté de Médicine Lyon Est', 'arr_date' => '2026-02-20 17:14:21', 'arr_time' => '13:30:00', 'nb_places' => 2, 'nb_available' => 2, 'price' => 26.5, 'smokers' => 1, 'animals' => 1, 'other' => null, 'duration' => 210],
-            ['id' => 100, 'driver' => 102, 'status' => 3, 'vehicle' => 100, 'origin' => 'Nice', 'pick' => 'Gare de Nice', 'dep_date' => '2026-03-01 09:00:00', 'dep_time' => '09:00:00', 'dest' => 'Marseille', 'drop' => 'Gare St Charles', 'arr_date' => '2026-03-01 12:00:00', 'arr_time' => '12:00:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 30, 'smokers' => 0, 'animals' => 0, 'other' => 'Trajet demo', 'duration' => 120],
+            ['id' => 3, 'driver' => 5, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-03-20 16:58:44', 'dep_time' => '14:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-03-20 16:58:44', 'arr_time' => '16:30:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 27, 'smokers' => 0, 'animals' => 0, 'other' => 'Merci de ne pas manger dans la voiture', 'duration' => 150],
+            ['id' => 4, 'driver' => 5, 'status' => 2, 'vehicle' => 2, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-03-20 16:58:44', 'dep_time' => '18:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-03-20 16:58:44', 'arr_time' => '21:00:00', 'nb_places' => 2, 'nb_available' => 1, 'price' => 25.5, 'smokers' => 1, 'animals' => 0, 'other' => null, 'duration' => 180],
+            ['id' => 5, 'driver' => 1, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '39, rue Gabriel Lamé', 'dep_date' => '2026-03-20 17:14:21', 'dep_time' => '10:00:00', 'dest' => 'Lyon', 'drop' => 'Faculté de Médicine Lyon Est', 'arr_date' => '2026-03-20 17:14:21', 'arr_time' => '13:30:00', 'nb_places' => 2, 'nb_available' => 2, 'price' => 26.5, 'smokers' => 1, 'animals' => 1, 'other' => null, 'duration' => 210],
+            ['id' => 100, 'driver' => 108, 'status' => 1, 'vehicle' => 100, 'origin' => 'Nice', 'pick' => 'Gare de Nice', 'dep_date' => '2026-03-01 09:00:00', 'dep_time' => '09:00:00', 'dest' => 'Marseille', 'drop' => 'Gare St Charles', 'arr_date' => '2026-03-01 12:00:00', 'arr_time' => '12:00:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 30, 'smokers' => 0, 'animals' => 0, 'other' => 'Trajet demo', 'duration' => 120],
         ];
 
         foreach ($ridesData as $r) {
@@ -245,7 +245,7 @@ class AppFixtures extends Fixture
             ['ride' => 3, 'user' => 3],
             ['ride' => 4, 'user' => 6],
             ['ride' => 5, 'user' => 7],
-            ['ride' => 100, 'user' => 103],
+            ['ride' => 100, 'user' => 110],
         ];
 
         foreach ($ridePassengersData as $rp) {
@@ -261,7 +261,7 @@ class AppFixtures extends Fixture
         // -------------------- EVALUATIONS --------------------
         $evalData = [
             ['id' => 1, 'ride' => 3, 'passenger' => 3, 'status' => 3, 'treated_by' => null, 'validation_passenger' => 1, 'rate' => 5, 'comment' => 'Trajet très agréable'],
-            ['id' => 2, 'ride' => 100, 'passenger' => 103, 'status' => 3, 'treated_by' => 102, 'validation_passenger' => 1, 'rate' => 5, 'comment' => 'Super trajet démo'],
+            ['id' => 2, 'ride' => 100, 'passenger' => 110, 'status' => 4, 'treated_by' => 107, 'validation_passenger' => 1, 'rate' => 5, 'comment' => 'Super trajet démo'],
         ];
 
         foreach ($evalData as $e) {

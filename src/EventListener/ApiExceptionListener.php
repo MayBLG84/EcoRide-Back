@@ -2,10 +2,12 @@
 
 namespace App\EventListener;
 
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
+#[AsEventListener(event: 'kernel.exception')]
 class ApiExceptionListener
 {
     public function onKernelException(ExceptionEvent $event)

@@ -1,0 +1,11 @@
+framework:
+    rate_limiter:
+        login:
+            policy: sliding_window
+            limit: 5
+            interval: "1 minute"
+
+        login_block:
+            policy: fixed_window
+            limit: 1
+            interval: "10 minutes"

@@ -6,6 +6,7 @@
 parameters:
     env(MONGODB_URI): ""
     env(MONGODB_DB): ""
+    cloudflare_turnstile_secret: "%env(CLOUDFLARE_TURNSTILE_SECRET)%"
 
 services:
     # default configuration for services in *this* file
@@ -20,3 +21,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Controller\AuthController:
+        arguments:
+            $turnstileSecret: "%cloudflare_turnstile_secret%"
+            $loginLimiter: "@limiter.login"
+            $blockLimiter: "@limiter.login_block"

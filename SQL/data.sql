@@ -4,7 +4,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ROLES
 -- ----------------------------
 INSERT INTO role (id, name) VALUES
-(1,'ROLE_ADM'),
+(1,'ROLE_ADMIN'),
 (2,'ROLE_DRIVER'),
 (3,'ROLE_PASSENGER'),
 (4,'ROLE_EMPLOYEE');
@@ -35,11 +35,11 @@ INSERT INTO user VALUES
 (9,'Marie','Dupont-Laurie','M.Dupont3','test2@test.com','$2y$13$hash','00000000','1986-01-24 00:00:00',NULL,'2026-01-22 16:45:18',NULL,20,0),
 
 -- DEMO USERS
-(100,'Admin','EcoRide','AdminUser','admin@ecoride.test','$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW','0600000001','1980-01-01 00:00:00',NULL,NOW(),NULL,100,5),
-(101,'Emma','Employee','EmployeeUser','employee@ecoride.test','$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW','0600000002','1990-01-01 00:00:00',NULL,NOW(),NULL,50,4.5),
-(102,'David','Driver','DriverUser','driver@ecoride.test','$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW','0600000003','1992-01-01 00:00:00',NULL,NOW(),NULL,30,4.8),
-(103,'Paul','Passenger','PassengerUser','passenger@ecoride.test','$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW','0600000004','1998-01-01 00:00:00',NULL,NOW(),NULL,20,4),
-(104,'Claire','Hybrid','HybridUser','hybrid@ecoride.test','$2y$13$CSp6sJQTiK.eIWoID88t4.cIXiq/JL14kq/SlV1MltwZk9P6vK6yW','0600000005','1995-01-01 00:00:00',NULL,NOW(),NULL,40,4.6);
+(106,'Admin','EcoRide','AdminUser','admin@ecoride.test','$2y$13$Ou6T.1QNnZKLjtUeMS1F2uKHLQHcFpA3UuXaZSjILSerP4RTzKBr.','0600000001','1980-01-01 00:00:00',NULL,NOW(),NULL,100,5),
+(107,'Emma','Employee','EmployeeUser','employee@ecoride.test','$2y$13$wHx2PjQr.Colmx.MGCFAmOhIWi6sP/t3eDUtZg/vSTKkMi4vX5rbq','0600000002','1990-01-01 00:00:00',NULL,NOW(),NULL,50,4.5),
+(108,'David','Driver','DriverUser','driver@ecoride.test','$2y$13$mcyliB7I6/kk5/SeuNC.c.8909nCswbWoMjwPk1JL53pl6lLNZLhm','0600000003','1992-01-01 00:00:00',NULL,NOW(),NULL,30,4.8),
+(109,'Paul','Passenger','PassengerUser','passenger@ecoride.test','$2y$13$FZxiTtff18sRIYf.OtoJ3u/c6NS6hxLLudheJXCr2qvHv88NClroq','0600000004','1998-01-01 00:00:00',NULL,NOW(),NULL,20,4),
+(110,'Claire','Hybrid','HybridUser','hybrid@ecoride.test','$2y$13$QovA0TbFbiFWeRWkc3YzYuKnTDShH3LmGEUY5CjJBNuwVkVtrcGrS','0600000005','1995-01-01 00:00:00',NULL,NOW(),NULL,40,4.6);
 
 -- ----------------------------
 -- USER ADDRESS
@@ -64,12 +64,12 @@ INSERT INTO user_role VALUES
 (9,3),
 
 -- DEMO ROLES
-(100,1),
-(101,4),
-(102,2),
-(103,3),
-(104,2),
-(104,3);
+(106,1),
+(107,4),
+(108,2),
+(109,3),
+(110,2),
+(110,3);
 
 -- ----------------------------
 -- VEHICLES
@@ -86,8 +86,8 @@ INSERT INTO vehicle VALUES
 -- USER VEHICLE
 -- ----------------------------
 INSERT INTO user_vehicle VALUES
-(5,1),(5,2),(1,3),
-(102,100);
+(1,3),(5,1),(5,2),
+(108,100);
 
 -- ----------------------------
 -- RIDE STATUS
@@ -106,21 +106,21 @@ INSERT INTO ride_status VALUES
 -- RIDES
 -- ----------------------------
 INSERT INTO ride VALUES
-(3,5,1,1,'Paris','7, Pl. Adolphe Chérioux','2026-02-20 16:58:44','14:00:00',NULL,'Lyon','Gare Part Dieu','2026-02-20 16:58:44','16:30:00',NULL,3,3,27,0,0,'Merci de ne pas manger dans la voiture','2025-12-12 16:58:44',NULL,NULL,150),
+(3,5,1,1,'Paris','7, Pl. Adolphe Chérioux','2026-03-20 16:58:44','14:00:00',NULL,'Lyon','Gare Part Dieu','2026-03-20 16:58:44','16:30:00',NULL,3,3,27,0,0,'Merci de ne pas manger dans la voiture','2025-12-12 16:58:44',NULL,NULL,150),
 
-(4,5,3,3,'Paris','7, Pl. Adolphe Chérioux','2026-02-20 16:58:44','18:00:00',NULL,'Lyon','Gare Part Dieu','2026-02-20 16:58:44','21:00:00',NULL,2,1,25.5,1,0,NULL,'2025-12-12 16:58:45',NULL,NULL,180),
+(4,5,2,3,'Paris','7, Pl. Adolphe Chérioux','2026-03-20 16:58:44','18:00:00',NULL,'Lyon','Gare Part Dieu','2026-03-20 16:58:44','21:00:00',NULL,2,1,25.5,1,0,NULL,'2025-12-12 16:58:45',NULL,NULL,180),
 
-(5,1,1,2,'Paris','39, rue Gabriel Lamé','2026-02-20 17:14:21','10:00:00',NULL,'Lyon','Faculté de Médicine Lyon Est','2026-02-20 17:14:21','13:30:00',NULL,2,2,26.5,1,1,NULL,'2025-12-12 17:14:21',NULL,NULL,210),
+(5,1,1,2,'Paris','39, rue Gabriel Lamé','2026-03-20 17:14:21','10:00:00',NULL,'Lyon','Faculté de Médicine Lyon Est','2026-03-20 17:14:21','13:30:00',NULL,2,2,26.5,1,1,NULL,'2025-12-12 17:14:21',NULL,NULL,210),
 
 -- DEMO RIDE
-(100,102,100,2,'Nice','Gare de Nice','2026-03-01 09:00:00','09:00:00',NULL,'Marseille','Gare St Charles','2026-03-01 12:00:00','12:00:00',NULL,3,3,30,0,0,'Trajet demo','2026-02-01 00:00:00',NULL,NULL,120);
+(100,108,1,2,'Nice','Gare de Nice','2026-03-01 09:00:00','09:00:00',NULL,'Marseille','Gare St Charles','2026-03-01 12:00:00','12:00:00',NULL,3,3,30,0,0,'Trajet demo','2026-02-01 00:00:00',NULL,NULL,120);
 
 -- ----------------------------
 -- RIDE PASSENGERS
 -- ----------------------------
 INSERT INTO ride_passenger VALUES
 (3,3),(4,6),(5,7),
-(100,103);
+(100,110);
 
 -- ----------------------------
 -- EVALUATION STATUS
@@ -139,6 +139,6 @@ INSERT INTO evaluation_status VALUES
 -- ----------------------------
 INSERT INTO evaluation VALUES
 (1,3,3,3,NULL,1,5,'Trajet très agréable',NOW(),NULL,NULL,NULL),
-(2,100,103,3,NULL,3,5,'Super trajet démo',NOW(),NULL,NULL,NULL);
+(2,100,110,4,107,3,5,'Super trajet démo',NOW(),NULL,NULL,NULL);
 
 SET FOREIGN_KEY_CHECKS=1;
