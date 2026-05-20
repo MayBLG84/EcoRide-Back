@@ -1,9 +1,19 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Security;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class SecurityService
 {
+    private array $allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/png'
+    ];
+
+    private int $maxFileSize = 2097152; // 2MB
+
     /**
      * Sanitize a string input by trimming, limiting length,
      * and removing unwanted characters.
@@ -12,12 +22,23 @@ class SecurityService
      * @param int $maxLength Maximum allowed length (default 255).
      * @return string Sanitized string.
      */
-    public function sanitizeString(string $input, int $maxLength = 255): string
+    public function sanitizeString(mixed $input, int $maxLength = 255): string
     {
-        $clean = trim($input);
+        // Force string
+        $clean = (string) $input;
+
+        // Remove HTML tags
+        $clean = strip_tags($clean);
+
+        // Trim spaces
+        $clean = trim($clean);
+
+        // Normalize internal spaces
+        $clean = preg_replace('/\s+/u', ' ', $clean) ?? '';
+
+        // Limit size
         $clean = mb_substr($clean, 0, $maxLength);
-        // Remove characters that are not letters, numbers, spaces, or hyphens
-        $clean = preg_replace('/[^\p{L}\p{N}\s\-]/u', '', $clean);
+
         return $clean;
     }
 
@@ -93,6 +114,26 @@ class SecurityService
         return checkdate($month, $day, $year);
     }
 
+    public function isValidBirthday(\DateTimeInterface $birthday, int $minimumAge = 18): bool
+    {
+        $today = new \DateTimeImmutable();
+
+        if ($birthday > $today) {
+            return false;
+        }
+
+        $age = $today->diff($birthday)->y;
+
+        return $age >= $minimumAge;
+    }
+
+    public function isAdult(\DateTimeInterface $birthday, int $minimumAge = 18): bool
+    {
+        $today = new \DateTimeImmutable();
+        $age = $today->diff($birthday)->y;
+        return $age >= $minimumAge;
+    }
+
     /**
      * Convert a valid NgbDateStruct array to a \DateTimeImmutable object.
      * Returns null if the structure is invalid.
@@ -122,5 +163,53 @@ class SecurityService
         $clean = preg_replace('/[\p{C}\p{Zl}\p{Zp}]/u', '', $clean);
 
         return $clean;
+    }
+
+    public function isValidNickname(string $nickname): bool
+    {
+        return (bool) preg_match(
+            '/^[A-Za-z0-9][A-Za-z0-9\-.\*@]{2,19}$/',
+            $nickname
+        );
+    }
+
+    public function isValidName(string $name): bool
+    {
+        return (bool) preg_match("/^[\p{L} '-]+$/u", $name);
+    }
+
+    public function isValidEmail(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+    }
+
+    public function isValidTelephone(string $telephone): bool
+    {
+        return (bool) preg_match('/^\+?[0-9]{8,15}$/', $telephone);
+    }
+
+    public function validateAttachments(array $files): bool
+    {
+        foreach ($files as $file) {
+
+            if (!$file instanceof UploadedFile) {
+                return false;
+            }
+
+            if ($file->getSize() > $this->maxFileSize) {
+                return false;
+            }
+
+            if (!in_array($file->getMimeType(), $this->allowedMimeTypes, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function normalizeEmail(string $email): string
+    {
+        return mb_strtolower(trim($email));
     }
 }

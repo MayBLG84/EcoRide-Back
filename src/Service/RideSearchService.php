@@ -5,6 +5,7 @@ namespace App\Service;
 use App\DTO\RideSearchRequest;
 use App\DTO\RideSearchResponse;
 use App\Repository\RideRepository;
+use App\Service\Security\SecurityService;
 
 /**
  * Service responsible for orchestrating ride search logic.

@@ -23,7 +23,7 @@ class UserSignupRequest
     #[Assert\Type(\DateTimeImmutable::class)]
     public \DateTimeImmutable $birthday;
 
-    #[Assert\Length(max: 15)]
+    #[Assert\Length(min: 8, max: 15)]
     public string $telephone;
 
     #[Assert\NotBlank]
@@ -51,4 +51,10 @@ class UserSignupRequest
         mimeTypes: ['image/jpeg', 'image/png', 'image/webp']
     )]
     public ?UploadedFile $profilePicture = null;
+
+    #[Assert\Blank]
+    public ?string $honeypot = null;
+
+    #[Assert\NotBlank]
+    public string $turnstileToken;
 }

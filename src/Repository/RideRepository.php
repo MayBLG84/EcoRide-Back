@@ -3,8 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Ride;
-use App\Entity\User;
-use App\Repository\EvaluationRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

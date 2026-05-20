@@ -38,6 +38,11 @@ class UserAddress
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
     public function getUser(): ?User
     {
         return $this->user;

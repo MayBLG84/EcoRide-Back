@@ -24,14 +24,14 @@ class Vehicle
     #[ORM\Column(length: 15)]
     private ?string $registration = null;
 
-    #[ORM\Column]
-    private ?\DateTime $firstRgDate = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $firstRgDate = null;
 
     #[ORM\Column(type: 'boolean')]
-    private ?bool $electric = false;
+    private bool $electric = false;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
@@ -41,7 +41,7 @@ class Vehicle
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false, onDelete: "RESTRICT")]
-    private ?VehicleBrand $vehicleBrand = null;
+    private VehicleBrand $vehicleBrand;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'vehicles')]
     private Collection $users;
@@ -49,6 +49,7 @@ class Vehicle
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
 
@@ -93,19 +94,19 @@ class Vehicle
         return $this;
     }
 
-    public function getFirstRgDate(): ?\DateTime
+    public function getFirstRgDate(): ?\DateTimeImmutable
     {
         return $this->firstRgDate;
     }
 
-    public function setFirstRgDate(\DateTime $firstRgDate): static
+    public function setFirstRgDate(\DateTimeImmutable $firstRgDate): static
     {
         $this->firstRgDate = $firstRgDate;
 
         return $this;
     }
 
-    public function isElectric(): ?bool
+    public function isElectric(): bool
     {
         return $this->electric;
     }
@@ -117,7 +118,7 @@ class Vehicle
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -141,12 +142,12 @@ class Vehicle
         return $this;
     }
 
-    public function getVehicleBrand(): ?VehicleBrand
+    public function getVehicleBrand(): VehicleBrand
     {
         return $this->vehicleBrand;
     }
 
-    public function setVehicleBrand(?VehicleBrand $vehicleBrand): static
+    public function setVehicleBrand(VehicleBrand $vehicleBrand): static
     {
         $this->vehicleBrand = $vehicleBrand;
 

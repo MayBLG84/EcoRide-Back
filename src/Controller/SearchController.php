@@ -25,48 +25,111 @@ class SearchController extends AbstractController
      */
     #[Route('/api/rides/search', name: 'search_rides', methods: ['GET'])]
     #[OA\Get(
-        summary: "Search rides",
+        path: '/api/rides/search',
+        summary: 'Search rides',
+        description: 'Search available rides by origin, destination, date, filters and pagination.',
+        tags: ['Rides'],
+
         parameters: [
+
             new OA\Parameter(
-                name: "originCity",
-                in: "query",
+                name: 'originCity',
+                in: 'query',
                 required: true,
-                schema: new OA\Schema(type: "string")
+                schema: new OA\Schema(type: 'string', example: 'Paris')
             ),
+
             new OA\Parameter(
-                name: "destinyCity",
-                in: "query",
+                name: 'destinyCity',
+                in: 'query',
                 required: true,
-                schema: new OA\Schema(type: "string")
+                schema: new OA\Schema(type: 'string', example: 'Lyon')
             ),
+
             new OA\Parameter(
-                name: "date[year]",
-                in: "query",
+                name: 'date[year]',
+                in: 'query',
                 required: true,
-                schema: new OA\Schema(type: "integer", example: 2025)
+                schema: new OA\Schema(type: 'integer', example: 2026)
             ),
+
             new OA\Parameter(
-                name: "date[month]",
-                in: "query",
+                name: 'date[month]',
+                in: 'query',
                 required: true,
-                schema: new OA\Schema(type: "integer", example: 12)
+                schema: new OA\Schema(type: 'integer', example: 5)
             ),
+
             new OA\Parameter(
-                name: "date[day]",
-                in: "query",
+                name: 'date[day]',
+                in: 'query',
                 required: true,
-                schema: new OA\Schema(type: "integer", example: 26)
+                schema: new OA\Schema(type: 'integer', example: 20)
             ),
+
             new OA\Parameter(
-                name: "page",
-                in: "query",
+                name: 'page',
+                in: 'query',
                 required: false,
-                schema: new OA\Schema(type: "integer", example: 1)
-            )
+                schema: new OA\Schema(type: 'integer', example: 1)
+            ),
+
+            new OA\Parameter(
+                name: 'orderBy',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'string', example: 'price_asc')
+            ),
         ],
+
         responses: [
-            new OA\Response(response: 200, description: "Search results (status + rides)"),
-            new OA\Response(response: 400, description: "Invalid request")
+
+            new OA\Response(
+                response: 200,
+                description: 'Ride search results',
+                content: new OA\JsonContent(
+                    properties: [
+
+                        new OA\Property(property: 'status', type: 'string', example: 'EXACT_MATCH'),
+
+                        new OA\Property(
+                            property: 'rides',
+                            type: 'array',
+                            items: new OA\Items(type: 'object')
+                        ),
+
+                        new OA\Property(
+                            property: 'pagination',
+                            type: 'object',
+                            nullable: true
+                        ),
+
+                        new OA\Property(
+                            property: 'totalResults',
+                            type: 'integer',
+                            nullable: true,
+                            example: 42
+                        ),
+
+                        new OA\Property(
+                            property: 'filtersMeta',
+                            type: 'object',
+                            nullable: true
+                        ),
+
+                        new OA\Property(
+                            property: 'filtersMetaGlobal',
+                            type: 'object',
+                            nullable: true
+                        ),
+                    ]
+                )
+            ),
+
+            new OA\Response(
+                response: 400,
+                description: 'Invalid request'
+            ),
         ]
     )]
     public function search(Request $request): JsonResponse

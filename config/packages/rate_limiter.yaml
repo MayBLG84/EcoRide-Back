@@ -1,11 +1,41 @@
 framework:
     rate_limiter:
-        login:
-            policy: sliding_window
+        signup_request:
+            policy: "sliding_window"
+            limit: 3
+            interval: "1 minute"
+
+        signup_block:
+            policy: "fixed_window"
+            limit: 1
+            interval: "10 minutes"
+
+        login_request:
+            policy: "sliding_window"
             limit: 5
             interval: "1 minute"
 
         login_block:
-            policy: fixed_window
+            policy: "fixed_window"
             limit: 1
             interval: "10 minutes"
+
+        contact_request:
+            policy: "sliding_window"
+            limit: 3
+            interval: "1 minute"
+
+        contact_block:
+            policy: "fixed_window"
+            limit: 1
+            interval: "10 minutes"
+
+        search_request:
+            policy: "sliding_window"
+            limit: 30
+            interval: "1 minute"
+
+        search_block:
+            policy: "fixed_window"
+            limit: 1
+            interval: "1 minute"

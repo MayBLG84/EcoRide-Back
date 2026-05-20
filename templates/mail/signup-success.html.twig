@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Bienvenue sur EcoRide</title>
+    </head>
+    <body>
+        <h1>Bienvenue {{ user.firstName }} !</h1>
+
+        <p>Votre compte EcoRide a bien été créé avec succès.</p>
+
+        <p>
+            Votre identifiant utilisateur est :
+            <strong>#{{ user.id }}</strong>
+        </p>
+
+        <p>
+            Nous sommes heureux de vous offrir
+            <strong>{{ giftAmount }}€</strong>
+            de crédit de bienvenue.
+        </p>
+
+        <p>
+            Vous pouvez maintenant vous connecter et commencer à utiliser nos
+            services.
+        </p>
+
+        <p>À bientôt sur EcoRide 🚗🌱</p>
+    </body>
+</html>

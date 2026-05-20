@@ -145,7 +145,7 @@ class AppFixtures extends Fixture
             $vehicle->setModel($v['model']);
             $vehicle->setColor($v['color']);
             $vehicle->setRegistration($v['registration']);
-            $vehicle->setFirstRgDate(new \DateTime($v['first_rg_date']));
+            $vehicle->setFirstRgDate(new \DateTimeImmutable($v['first_rg_date']));
             $vehicle->setElectric($v['electric']);
             $manager->persist($vehicle);
             $this->addReference('vehicle_' . $v['id'], $vehicle);
@@ -204,10 +204,10 @@ class AppFixtures extends Fixture
 
         // -------------------- RIDES --------------------
         $ridesData = [
-            ['id' => 3, 'driver' => 5, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-03-20 16:58:44', 'dep_time' => '14:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-03-20 16:58:44', 'arr_time' => '16:30:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 27, 'smokers' => 0, 'animals' => 0, 'other' => 'Merci de ne pas manger dans la voiture', 'duration' => 150],
-            ['id' => 4, 'driver' => 5, 'status' => 2, 'vehicle' => 2, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-03-20 16:58:44', 'dep_time' => '18:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-03-20 16:58:44', 'arr_time' => '21:00:00', 'nb_places' => 2, 'nb_available' => 1, 'price' => 25.5, 'smokers' => 1, 'animals' => 0, 'other' => null, 'duration' => 180],
-            ['id' => 5, 'driver' => 1, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '39, rue Gabriel Lamé', 'dep_date' => '2026-03-20 17:14:21', 'dep_time' => '10:00:00', 'dest' => 'Lyon', 'drop' => 'Faculté de Médicine Lyon Est', 'arr_date' => '2026-03-20 17:14:21', 'arr_time' => '13:30:00', 'nb_places' => 2, 'nb_available' => 2, 'price' => 26.5, 'smokers' => 1, 'animals' => 1, 'other' => null, 'duration' => 210],
-            ['id' => 100, 'driver' => 108, 'status' => 1, 'vehicle' => 100, 'origin' => 'Nice', 'pick' => 'Gare de Nice', 'dep_date' => '2026-03-01 09:00:00', 'dep_time' => '09:00:00', 'dest' => 'Marseille', 'drop' => 'Gare St Charles', 'arr_date' => '2026-03-01 12:00:00', 'arr_time' => '12:00:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 30, 'smokers' => 0, 'animals' => 0, 'other' => 'Trajet demo', 'duration' => 120],
+            ['id' => 3, 'driver' => 5, 'status' => 1, 'vehicle' => 1, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-06-20 16:58:44', 'dep_time' => '14:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-06-20 16:58:44', 'arr_time' => '16:30:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 27, 'smokers' => 0, 'animals' => 0, 'other' => 'Merci de ne pas manger dans la voiture', 'duration' => 150],
+            ['id' => 4, 'driver' => 5, 'status' => 2, 'vehicle' => 2, 'origin' => 'Paris', 'pick' => '7, Pl. Adolphe Chérioux', 'dep_date' => '2026-06-20 16:58:44', 'dep_time' => '18:00:00', 'dest' => 'Lyon', 'drop' => 'Gare Part Dieu', 'arr_date' => '2026-06-20 16:58:44', 'arr_time' => '21:00:00', 'nb_places' => 2, 'nb_available' => 1, 'price' => 25.5, 'smokers' => 1, 'animals' => 0, 'other' => null, 'duration' => 180],
+            ['id' => 5, 'driver' => 1, 'status' => 1, 'vehicle' => 3, 'origin' => 'Paris', 'pick' => '39, rue Gabriel Lamé', 'dep_date' => '2026-06-20 17:14:21', 'dep_time' => '10:00:00', 'dest' => 'Lyon', 'drop' => 'Faculté de Médicine Lyon Est', 'arr_date' => '2026-06-20 17:14:21', 'arr_time' => '13:30:00', 'nb_places' => 2, 'nb_available' => 2, 'price' => 26.5, 'smokers' => 1, 'animals' => 1, 'other' => null, 'duration' => 210],
+            ['id' => 100, 'driver' => 108, 'status' => 1, 'vehicle' => 100, 'origin' => 'Nice', 'pick' => 'Gare de Nice', 'dep_date' => '2026-07-01 09:00:00', 'dep_time' => '09:00:00', 'dest' => 'Marseille', 'drop' => 'Gare St Charles', 'arr_date' => '2026-07-01 12:00:00', 'arr_time' => '12:00:00', 'nb_places' => 3, 'nb_available' => 3, 'price' => 30, 'smokers' => 0, 'animals' => 0, 'other' => 'Trajet demo', 'duration' => 120],
         ];
 
         foreach ($ridesData as $r) {
